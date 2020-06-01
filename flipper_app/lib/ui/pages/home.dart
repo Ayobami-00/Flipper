@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage(
-                        "images/cube-3324923.jpg",
+                        "assets/images/cube-3324923.jpg",
                       ),
                       fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(
@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
                                     child: CircleAvatar(
                                       foregroundColor: Colors.white,
                                       child: Image.asset(
-                                        "images/woman-159169.png",
+                                        "assets/images/woman-159169.png",
                                         fit: BoxFit.cover,
                                         height: app_height / 15,
                                         width: app_width / 10,

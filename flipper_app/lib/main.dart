@@ -1,4 +1,5 @@
-import 'package:flipper_app/ui/pages/home.dart';
+import 'package:flipper_app/ui/pages/game.dart';
+import 'package:flipper_app/ui/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
        
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: Loading(),
     );
   }
 }
