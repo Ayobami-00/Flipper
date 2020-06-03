@@ -1,8 +1,16 @@
 import 'dart:math';
 
+import 'package:flipper_app/bloc/game/bloc/game_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FlipperWidget extends StatefulWidget {
+  final int index;
+  final bool stay_flipped_open;
+  final bool do_animation;
+  final String image;
+
+  const FlipperWidget({Key key, @required this.index, @required this.stay_flipped_open, @required this.do_animation, @required this.image}) : super(key: key);
   @override
   _FlipperWidgetState createState() => _FlipperWidgetState();
 }
@@ -12,6 +20,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
   bool reversed = false;
   Animation<double> _animation;
   AnimationController _animationController;
+  // BlocProvider.of<GameBloc>(context)
 
   @override
   void initState() {
@@ -26,6 +35,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
   }
 
   _doAnim() {
+    int taps = 0;
     if (!mounted) return;
     if (reversed) {
       _animationController.reverse();
@@ -33,11 +43,15 @@ class _FlipperWidgetState extends State<FlipperWidget>
     } else {
       _animationController.forward();
       reversed = true;
+      print(taps+=1);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    print(widget.index);
+    print(widget.do_animation);
+    print(widget.stay_flipped_open);
     return Scaffold(
       body: Center(
         child: AnimatedBuilder(
@@ -50,7 +64,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
                 child: GestureDetector(
                   onTap: _doAnim,
                   child: IndexedStack(
-                    children: <Widget>[CardOne(), CardTwo()],
+                    children: <Widget>[CardOne(), CardTwo(image: widget.image,)],
                     alignment: Alignment.center,
                     index: _animationController.value < 0.5 ? 0 : 1,
                   ),
@@ -86,6 +100,9 @@ class CardOne extends StatelessWidget {
 }
 
 class CardTwo extends StatelessWidget {
+  final String image;
+
+  const CardTwo({Key key, @required this.image}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -93,15 +110,9 @@ class CardTwo extends StatelessWidget {
       child: Container(
         width: 100,
         height: 100,
-        child: Center(
-          child: Text(
-            "356789",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 35.0,
-            ),
-          ),
+        child: Image.network(
+          image,
+          fit: BoxFit.cover
         ),
       ),
     );

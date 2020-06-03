@@ -1,13 +1,19 @@
 import 'package:flipper_app/ui/pages/game.dart';
 import 'package:flipper_app/ui/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
-void main() {
+import 'bloc/game/bloc/game_bloc.dart';
+
+void main() async {
+  // final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
+  // Hive.init(appDocumentDir.path);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,7 +23,10 @@ class MyApp extends StatelessWidget {
        
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Loading(),
+      home: BlocProvider(
+      create: (context) => GameBloc(),
+      child: GameRoom(),
+    ),
     );
   }
 }

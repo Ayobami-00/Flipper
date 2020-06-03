@@ -27,6 +27,9 @@ dependencies:
   flutter_bloc: ^4.0.0
   bloc: ^4.0.0
   equatable: ^1.2.0
+  hive: ^1.4.1+1
+  hive_flutter: ^0.3.0+2
+  path_provider: ^1.6.10
   
   
 
@@ -38,6 +41,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  hive_generator: ^0.5.1
+  build_runner:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
