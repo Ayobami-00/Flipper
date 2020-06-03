@@ -4,6 +4,7 @@ import 'package:flipper_app/ui/widgets/timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flipper_app/ui/widgets/flipper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 class GameRoom extends StatefulWidget {
   @override
@@ -11,12 +12,28 @@ class GameRoom extends StatefulWidget {
 }
 
 class _GameRoomState extends State<GameRoom> {
+  
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     BlocProvider.of<GameBloc>(context).add(LoadGamePage());
   }
 
+  @override
+  void initState() {
+    _intializeBox();
+    super.initState();
+  }
+
+  @override
+  void dispose() { 
+    Hive.close();
+    super.dispose();
+  }
+
+  Future _intializeBox() async{
+    await Hive.openBox('gameRoomData');
+  }
   @override
   Widget build(BuildContext context) {
     int tap_number = 0;
@@ -62,14 +79,16 @@ class _GameRoomState extends State<GameRoom> {
                             mainAxisSpacing: 30.0,
                             crossAxisSpacing: 10.0),
                         itemBuilder: (BuildContext context, int index) {
-                          return FlipperWidget(
-                            index: index,
-                            stay_flipped_open:
-                                state.cards_data[index.toString()]
-                                    ["stay_flipped_open"],
-                            do_animation: state.cards_data[index.toString()]
-                                ["do_animation"],
-                            image: state.cards_data[index.toString()]["image"],
+                          return Container(
+                            child: FlipperWidget(
+                              index: index,
+                              stay_flipped_open:
+                                  state.cards_data[index.toString()]
+                                      ["stay_flipped_open"],
+                              do_animation: state.cards_data[index.toString()]
+                                  ["do_animation"],
+                              image: state.cards_data[index.toString()]["image"],
+                            ),
                           );
                         })),
               ),

@@ -1,8 +1,11 @@
 import 'dart:math';
 
 import 'package:flipper_app/bloc/game/bloc/game_bloc.dart';
+import 'package:flipper_app/models/card_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:hive/hive.dart';
 
 class FlipperWidget extends StatefulWidget {
   final int index;
@@ -10,7 +13,13 @@ class FlipperWidget extends StatefulWidget {
   final bool do_animation;
   final String image;
 
-  const FlipperWidget({Key key, @required this.index, @required this.stay_flipped_open, @required this.do_animation, @required this.image}) : super(key: key);
+  const FlipperWidget(
+      {Key key,
+      @required this.index,
+      @required this.stay_flipped_open,
+      @required this.do_animation,
+      @required this.image})
+      : super(key: key);
   @override
   _FlipperWidgetState createState() => _FlipperWidgetState();
 }
@@ -26,7 +35,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
   void initState() {
     super.initState();
     _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500 ));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
 
     _animation = TweenSequence([
       TweenSequenceItem(tween: Tween(begin: 0.0, end: -pi / 2), weight: 0.5),
@@ -43,7 +52,33 @@ class _FlipperWidgetState extends State<FlipperWidget>
     } else {
       _animationController.forward();
       reversed = true;
-      print(taps+=1);
+      // print(widget.index);
+      addTapsTOGameRoomData(1);
+    }
+  }
+
+  void addTapsTOGameRoomData(int tap) async {
+    // await Hive.openBox('gameRoomData');
+    final gameRoomData = Hive.box('gameRoomData');
+    int noOfTaps = gameRoomData.get("gameRoomTapData");
+
+    if (noOfTaps == null) {
+      await gameRoomData.put("gameRoomTapData", tap);
+    } else if (noOfTaps == 0) {
+      await gameRoomData.put("gameRoomTapData", tap);
+
+      final newCardData = CardData(
+          index: widget.index,
+          stay_flipped_open: widget.stay_flipped_open,
+          do_animation: widget.do_animation,
+          image: widget.image);
+
+      await gameRoomData.put("gameRoomCardData1", tap);
+
+    } else if (noOfTaps == 1) {
+      await gameRoomData.put("gameRoomTapData", tap += 1);
+      int printt = gameRoomData.get("gameRoomTapData");
+      print(printt);
     }
   }
 
@@ -57,19 +92,24 @@ class _FlipperWidgetState extends State<FlipperWidget>
         child: AnimatedBuilder(
           animation: _animation,
           builder: (context, child) => Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(_animation.value),
+            child: GestureDetector(
+              onTap: _doAnim,
+              child: IndexedStack(
+                children: <Widget>[
+                  CardOne(),
+                  CardTwo(
+                    image: widget.image,
+                  )
+                ],
                 alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateY(_animation.value),
-                child: GestureDetector(
-                  onTap: _doAnim,
-                  child: IndexedStack(
-                    children: <Widget>[CardOne(), CardTwo(image: widget.image,)],
-                    alignment: Alignment.center,
-                    index: _animationController.value < 0.5 ? 0 : 1,
-                  ),
-                ),
+                index: _animationController.value < 0.5 ? 0 : 1,
               ),
+            ),
+          ),
         ),
       ),
     );
@@ -110,10 +150,7 @@ class CardTwo extends StatelessWidget {
       child: Container(
         width: 100,
         height: 100,
-        child: Image.network(
-          image,
-          fit: BoxFit.cover
-        ),
+        child: Image.network(image, fit: BoxFit.cover),
       ),
     );
   }
