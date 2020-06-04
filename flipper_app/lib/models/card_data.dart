@@ -20,5 +20,6 @@ class CardData {
   final String image;
 
   CardData({@required this.index, @required this.stay_flipped_open, @required this.do_animation, @required this.image});
+
 }
 

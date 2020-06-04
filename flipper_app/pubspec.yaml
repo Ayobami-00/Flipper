@@ -29,7 +29,8 @@ dependencies:
   equatable: ^1.2.0
   hive: ^1.4.1+1
   hive_flutter: ^0.3.0+2
-  path_provider: 
+  path_provider:
+  fluttertoast: ^4.0.1 
   
   
 

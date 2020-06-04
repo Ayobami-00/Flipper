@@ -11,11 +11,12 @@ class GameInitial extends GameState {
 
 class GamePageLoaded extends GameState {
 
-  final List<String> shuffled_image_list;
-  final Map<String,dynamic> cards_data;
   final int score;
+  final bool status;
+  final bool init;
+  
 
-  GamePageLoaded({@required this.shuffled_image_list, @required this.cards_data, @required this.score});
+  GamePageLoaded({@required this.score,@required this.status,@required this.init,});
 
   @override
   List<Object> get props => [];

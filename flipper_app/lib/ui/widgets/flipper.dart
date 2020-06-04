@@ -111,7 +111,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
               ..setEntry(3, 2, 0.001)
               ..rotateY(_animation.value),
             child: GestureDetector(
-              onTap: _doAnim,
+              onTap: widget.do_animation? _doAnim : null,
               child: IndexedStack(
                 children: <Widget>[
                   CardOne(),
@@ -120,7 +120,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
                   )
                 ],
                 alignment: Alignment.center,
-                index: _animationController.value < 0.5 ? 0 : 1,
+                index: widget.stay_flipped_open ? 1 : (_animationController.value < 0.5 ? 0 : 1),
               ),
             ),
           ),
