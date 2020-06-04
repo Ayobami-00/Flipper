@@ -61,6 +61,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
     // await Hive.openBox('gameRoomData');
     final gameRoomData = Hive.box('gameRoomData');
     int noOfTaps = gameRoomData.get("gameRoomTapData");
+    print(noOfTaps);
 
     if (noOfTaps == null) {
       await gameRoomData.put("gameRoomTapData", tap);
@@ -72,13 +73,26 @@ class _FlipperWidgetState extends State<FlipperWidget>
           stay_flipped_open: widget.stay_flipped_open,
           do_animation: widget.do_animation,
           image: widget.image);
-
-      await gameRoomData.put("gameRoomCardData1", tap);
+      
+      await gameRoomData.put("gameCardData1", newCardData);
 
     } else if (noOfTaps == 1) {
-      await gameRoomData.put("gameRoomTapData", tap += 1);
-      int printt = gameRoomData.get("gameRoomTapData");
-      print(printt);
+      await gameRoomData.put("gameRoomTapData", tap - 1);
+      final newCardData = CardData(
+          index: widget.index,
+          stay_flipped_open: widget.stay_flipped_open,
+          do_animation: widget.do_animation,
+          image: widget.image);
+      
+      await gameRoomData.put("gameCardData2", newCardData);
+      final cardData1 = gameRoomData.get("gameCardData1") as CardData;
+      final cardData2 = gameRoomData.get("gameCardData2") as CardData;
+
+      print(cardData1.image);
+      print(cardData2.image);
+
+      BlocProvider.of<GameBloc>(context).add(VerifyGamePage(cardData1: cardData1, cardData2: cardData2));
+      
     }
   }
 

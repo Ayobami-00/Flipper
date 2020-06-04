@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flipper_app/models/card_data.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -58,7 +59,16 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     "11": {"stay_flipped_open": true, "do_animation": true, "image": shuffled_image_list[11]},
   };
 
-      yield(GamePageLoaded(cards_data: cards_data, shuffled_image_list:shuffled_image_list));
+    await Hive.openBox('gameRoomData');
+    final gameRoomData = Hive.box('gameRoomData');
+    await gameRoomData.put("gameScore", 5);
+    int score = gameRoomData.get("gameScore") as int;
+
+      yield(GamePageLoaded(cards_data: cards_data, shuffled_image_list:shuffled_image_list,score: score));
     }
+    else if(event is VerifyGamePage){
+
+    }
+
   }
 }

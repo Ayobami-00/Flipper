@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flipper_app/ui/widgets/flipper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class GameRoom extends StatefulWidget {
   @override
@@ -12,7 +13,6 @@ class GameRoom extends StatefulWidget {
 }
 
 class _GameRoomState extends State<GameRoom> {
-  
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -26,14 +26,15 @@ class _GameRoomState extends State<GameRoom> {
   }
 
   @override
-  void dispose() { 
+  void dispose() {
     Hive.close();
     super.dispose();
   }
 
-  Future _intializeBox() async{
+  Future _intializeBox() async {
     await Hive.openBox('gameRoomData');
   }
+
   @override
   Widget build(BuildContext context) {
     int tap_number = 0;
@@ -42,7 +43,7 @@ class _GameRoomState extends State<GameRoom> {
     double appWidth = MediaQuery.of(context).size.width;
     return BlocBuilder<GameBloc, GameState>(
         builder: (BuildContext context, GameState state) {
-          List<Map<String,dynamic>> test_list = [];
+      List<Map<String, dynamic>> test_list = [];
       if (state is GamePageLoaded) {
         return Scaffold(
           backgroundColor: Colors.white,
@@ -87,7 +88,8 @@ class _GameRoomState extends State<GameRoom> {
                                       ["stay_flipped_open"],
                               do_animation: state.cards_data[index.toString()]
                                   ["do_animation"],
-                              image: state.cards_data[index.toString()]["image"],
+                              image: state.cards_data[index.toString()]
+                                  ["image"],
                             ),
                           );
                         })),
@@ -140,7 +142,9 @@ class _GameRoomState extends State<GameRoom> {
                           width: 30.0,
                           decoration: BoxDecoration(
                               shape: BoxShape.circle, color: Colors.white),
-                          child: Center(child: Text('444'))),
+                          child: Center(
+                              child: Text(state.score.toString())
+                              )),
                       Text("Score",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -154,10 +158,10 @@ class _GameRoomState extends State<GameRoom> {
         );
       } else if (state is GameInitial) {
         return Loading();
-      }
-      else{
+      } else {
         return Loading();
       }
     });
   }
 }
+

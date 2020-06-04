@@ -17,6 +17,11 @@ class LoadGamePage implements GameEvent{
 }
 
 class VerifyGamePage implements GameEvent{
+
+  final CardData cardData1;
+  final CardData cardData2;
+
+  VerifyGamePage({@required this.cardData1, @required this.cardData2});
  
   @override
   // TODO: implement props
