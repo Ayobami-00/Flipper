@@ -52,7 +52,7 @@ class _GameRoomState extends State<GameRoom> {
                 msg: "Great one!",
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.TOP,
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.green,
                 textColor: Colors.white,
                 fontSize: 16.0);
           } else {
