@@ -1,4 +1,4 @@
-import 'package:flipper_app/ui/widgets/countdown_timer.dart';
+import 'package:flipper_app/ui/pages/countdown_timer_page.dart';
 import 'package:flipper_app/ui/widgets/timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flipper_app/utils/sizes.dart';
@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                           padding: Sizes.spacingAllSmall * 3,
                           child: InkWell(
                             onTap: (){
-                                Navigator.push(context, PageTransition(type: PageTransitionType.fade ,duration: const Duration(milliseconds: 500), child: CountDownTimer()));
+                                Navigator.push(context, PageTransition(type: PageTransitionType.fade ,duration: const Duration(milliseconds: 500), child: CountDownTimerPage()));
                             },
                             child: Container(
                               decoration: BoxDecoration(
