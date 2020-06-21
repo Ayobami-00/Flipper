@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flipper_app/ui/widgets/timer.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:flipper_app/ui/pages/game.dart';
+import 'package:flipper_app/bloc/game/bloc/game_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CountDownTimerPage extends StatefulWidget {
   State createState() => new _CountDownTimerPageState();
@@ -61,9 +63,13 @@ class _CountDownTimerPageState extends State<CountDownTimerPage>
               Navigator.push(
                   context,
                   PageTransition(
-                      type: PageTransitionType.fade,
-                      duration: const Duration(milliseconds: 500),
-                      child: GameRoom()));
+                    type: PageTransitionType.fade,
+                    duration: const Duration(milliseconds: 500),
+                    child: BlocProvider(
+                      create: (context) => GameBloc(),
+                      child: GameRoom(),
+                    ),
+                  ));
             },
             countDownTimerStyle:
                 TextStyle(color: Colors.white, fontSize: 120.0, height: 1.2),

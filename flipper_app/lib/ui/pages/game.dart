@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GameRoom extends StatefulWidget {
   @override
@@ -16,7 +17,13 @@ class GameRoom extends StatefulWidget {
 
 class _GameRoomState extends State<GameRoom> {
 
-  Box<CardData> cardsDataBox;
+  Future<String> getStringValuesSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String stringValue = prefs.getString('USERNAME');
+    return stringValue;
+  }
+
+  // Box<CardData> cardsDataBox;
 
   @override
   void didChangeDependencies() {
@@ -28,7 +35,7 @@ class _GameRoomState extends State<GameRoom> {
   void initState() {
     // _intializeBox();
     super.initState();
-    cardsDataBox = Hive.box<CardData>('cardsData');
+   
   }
 
   @override
@@ -38,7 +45,8 @@ class _GameRoomState extends State<GameRoom> {
   }
 
   // Future _intializeBox() async {
-  //   await Hive.openBox('gameRoomData');
+  //   await Hive.openBox('cardsData');
+  //   //  cardsDataBox = Hive.box<CardData>('cardsData');
   // }
 
   @override
@@ -173,8 +181,8 @@ class _GameRoomState extends State<GameRoom> {
                 flex: 10,
                 child: Container(
                     child: ValueListenableBuilder(
-                  valueListenable: cardsDataBox.listenable(),
-                  builder: (context, Box<CardData> box, _) {
+                  valueListenable: Hive.box('cardsData').listenable(),
+                  builder: (context, Box<dynamic> box, _) {
                     if (box.values.isEmpty) {
                       return Text('data is empty');
                     } else {

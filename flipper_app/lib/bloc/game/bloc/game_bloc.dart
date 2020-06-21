@@ -105,7 +105,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       // };
 
       
-      final cardDataBox = Hive.box('cardsData');
+      final cardDataBox = await Hive.openBox('cardsData');
 
       for (int index = 0; index < 12; index++) {
         final cardData = CardData(
@@ -117,9 +117,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       }
 
       
-      final gameRoomData = Hive.box('gameRoomData');
-      await gameRoomData.put("gameScore", 5);
+      final gameRoomData = await Hive.openBox('gameRoomData');
+      await gameRoomData.put("gameScore", 0);
       int score = gameRoomData.get("gameScore") as int;
+      // Hive.close();
 
       yield (GamePageLoaded(score: score,status: false, init: true));
     } else if (event is VerifyGamePage) {
@@ -141,13 +142,13 @@ class GameBloc extends Bloc<GameEvent, GameState> {
                 do_animation: true,
                 image: event.cardData2.image));
 
-        final gameRoomData = Hive.box('gameRoomData');
+        final gameRoomData = await Hive.openBox('gameRoomData');
         int score = gameRoomData.get("gameScore") + 5;
 
         yield (GamePageLoaded(score: score,status: true, init: false));
       } else {
         final gameRoomData = Hive.box('gameRoomData');
-        int score = gameRoomData.get("gameScore") + 5;
+        int score = gameRoomData.get("gameScore") - 5;
 
         yield (GamePageLoaded(score: score,status: false, init: false));
 

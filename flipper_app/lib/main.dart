@@ -1,18 +1,17 @@
 import 'package:flipper_app/ui/pages/home.dart';
 import 'package:flipper_app/ui/widgets/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:flipper_app/models/card_data.dart';
 
-import 'bloc/game/bloc/game_bloc.dart';
+
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized(); 
-  // final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
-  // Hive.init(appDocumentDir.path);
-  // Hive.registerAdapter(CardDataAdapter());
+  WidgetsFlutterBinding.ensureInitialized(); 
+  final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDir.path);
+  Hive.registerAdapter(CardDataAdapter());
   // await Hive.openBox<CardData>('cardsData');
   // await Hive.openBox('gameRoomData');
   runApp(MyApp());
