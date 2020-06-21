@@ -129,11 +129,22 @@ class _HomePageState extends State<HomePage> {
                                               fontSize: 30.0,
                                               fontWeight: FontWeight.bold),
                                         )
-                                      : Text("GUEST", 
-                                      style: TextStyle(
-                                            color: Colors.white,
-                                              fontSize: 30.0,
-                                              fontWeight: FontWeight.bold),
+                                      : Column(
+                                        children: <Widget>[
+                                          Text("GUEST", 
+                                          style: TextStyle(
+                                                color: Colors.white,
+                                                  fontSize: 30.0,
+                                                  fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(height: Sizes.s4,),
+                                          Text("Tap to change", 
+                                          style: TextStyle(
+                                                color: Colors.white,
+                                                  fontSize: 14.0,
+                                                  fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
                                       );
                                 },
                               ),

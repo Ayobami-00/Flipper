@@ -90,7 +90,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
 
       print(cardData1.image);
       print(cardData2.image);
-
+      await Future.delayed(const Duration(milliseconds: 500));
       BlocProvider.of<GameBloc>(context).add(VerifyGamePage(cardData1: cardData1, cardData2: cardData2));
       
     }
@@ -134,20 +134,10 @@ class CardOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.red,
+      color: Colors.deepPurple,
       child: Container(
         width: 100,
         height: 100,
-        child: Center(
-          child: Text(
-            "Tap to see the code",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 25.0,
-            ),
-          ),
-        ),
       ),
     );
   }

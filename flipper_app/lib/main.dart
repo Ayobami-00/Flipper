@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
-  Hive.registerAdapter(CardDataAdapter());
+  // Hive.registerAdapter(CardDataAdapter());
   // await Hive.openBox<CardData>('cardsData');
   // await Hive.openBox('gameRoomData');
   runApp(MyApp());

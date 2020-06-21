@@ -11,12 +11,12 @@ class GameInitial extends GameState {
 
 class GamePageLoaded extends GameState {
 
-  final int score;
   final bool status;
   final bool init;
+  final List<CardData> cardDataList;
   
 
-  GamePageLoaded({@required this.score,@required this.status,@required this.init,});
+  GamePageLoaded({@required this.status,@required this.init,this.cardDataList});
 
   @override
   List<Object> get props => [];

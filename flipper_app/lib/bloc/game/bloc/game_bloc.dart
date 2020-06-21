@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -104,54 +105,73 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       //   },
       // };
 
-      
       final cardDataBox = await Hive.openBox('cardsData');
-
+      List<CardData> cardDataList = [];
       for (int index = 0; index < 12; index++) {
-        final cardData = CardData(
+        CardData cardData = CardData(
             index: index,
             stay_flipped_open: false,
             do_animation: true,
             image: shuffled_image_list[index]);
-        cardDataBox.add(cardData);
+        cardDataList.add(cardData);
       }
 
-      
+      await cardDataBox.put("cardsData", cardDataList);
+
       final gameRoomData = await Hive.openBox('gameRoomData');
       await gameRoomData.put("gameScore", 0);
       int score = gameRoomData.get("gameScore") as int;
+      print("Initial Score: $score");
       // Hive.close();
 
-      yield (GamePageLoaded(score: score,status: false, init: true));
+      yield (GamePageLoaded(
+          status: false, init: true, cardDataList: cardDataList));
     } else if (event is VerifyGamePage) {
+      yield  GameInitial();
       if (event.cardData1.image == event.cardData2.image) {
         final cardDataBox = Hive.box('cardsData');
-        await cardDataBox.putAt(
-            event.cardData1.index,
-            CardData(
-                index: event.cardData1.index,
-                stay_flipped_open: true,
-                do_animation: true,
-                image: event.cardData1.image));
+        List<CardData> cardDataList =
+            await cardDataBox.get("cardsData") as List<CardData>;
+        cardDataList[event.cardData1.index] = CardData(
+            index: event.cardData1.index,
+            stay_flipped_open: true,
+            do_animation: false,
+            image: event.cardData1.image);
 
-        await cardDataBox.putAt(
-            event.cardData2.index,
-            CardData(
-                index: event.cardData2.index,
-                stay_flipped_open: true,
-                do_animation: true,
-                image: event.cardData2.image));
+        cardDataList[event.cardData2.index] = CardData(
+            index: event.cardData2.index,
+            stay_flipped_open: true,
+            do_animation: false,
+            image: event.cardData2.image);
+        print(cardDataList);
+        await cardDataBox.put("cardsData", cardDataList);
 
         final gameRoomData = await Hive.openBox('gameRoomData');
-        int score = gameRoomData.get("gameScore") + 5;
+        int score = await gameRoomData.get("gameScore") as int;
+        await gameRoomData.put("gameScore", score+5);
+        print("Updated Score: ${score+5}");
 
-        yield (GamePageLoaded(score: score,status: true, init: false));
+        await Future.delayed(const Duration(milliseconds: 400));
+        yield (GamePageLoaded(
+            status: true,
+            init: false,
+            cardDataList: cardDataList));
       } else {
-        final gameRoomData = Hive.box('gameRoomData');
-        int score = gameRoomData.get("gameScore") - 5;
+        yield  GameInitial();
+        final cardDataBox = Hive.box('cardsData');
+        List<CardData> cardDataList =
+            await cardDataBox.get("cardsData") as List<CardData>;
+            print("No match $cardDataList");
 
-        yield (GamePageLoaded(score: score,status: false, init: false));
-
+        final gameRoomData = await Hive.openBox('gameRoomData');
+        int score = await gameRoomData.get("gameScore") as int;
+        print("Updated Score: ${score}");
+        await Future.delayed(const Duration(milliseconds: 500));
+        yield (GamePageLoaded(
+          status: false,
+          init: false,
+          cardDataList: cardDataList,
+        ));
       }
     }
   }

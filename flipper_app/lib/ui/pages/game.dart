@@ -16,7 +16,6 @@ class GameRoom extends StatefulWidget {
 }
 
 class _GameRoomState extends State<GameRoom> {
-
   Future<String> getStringValuesSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String stringValue = prefs.getString('USERNAME');
@@ -35,7 +34,6 @@ class _GameRoomState extends State<GameRoom> {
   void initState() {
     // _intializeBox();
     super.initState();
-   
   }
 
   @override
@@ -55,38 +53,38 @@ class _GameRoomState extends State<GameRoom> {
 
     double appHeight = MediaQuery.of(context).size.height;
     double appWidth = MediaQuery.of(context).size.width;
-    return BlocListener<GameBloc, GameState>(
-        listener: (BuildContext context, GameState state) {
-      if (state is GamePageLoaded) {
-        if (!state.init) {
-          if (state.status) {
-            Fluttertoast.showToast(
-                msg: "Great one!",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.TOP,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
-          } else {
-            Fluttertoast.showToast(
-                msg: "Ouch! Try again!",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.TOP,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
-          }
-        }
-      }
-    }, child: BlocBuilder<GameBloc, GameState>(
-            builder: (BuildContext context, GameState state) {
-      List<Map<String, dynamic>> test_list = [];
-      if (state is GamePageLoaded) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: SafeArea(
-              child: Column(
-            children: <Widget>[
+    return WillPopScope(
+      onWillPop: () async {
+        // set up the buttons
+        Widget cancelButton = FlatButton(
+          child: Text("Ok", style: TextStyle(color: Colors.black)),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        );
+        // set up the AlertDialog
+        AlertDialog alert = AlertDialog(
+          // title: Text("AlertDialog"),
+          content: Text("You can't leave the game at this point!",
+              style: TextStyle(fontSize: 20.0)),
+          actions: [
+            cancelButton,
+          ],
+        );
+
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alert;
+          },
+        );
+        return false;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.green,
+            actions: <Widget>[
               Expanded(
                 flex: 1,
                 child: Row(
@@ -96,26 +94,20 @@ class _GameRoomState extends State<GameRoom> {
                       onPressed: () {
                         // set up the buttons
                         Widget cancelButton = FlatButton(
-                          child: Text("No"),
+                          child:
+                              Text("Ok", style: TextStyle(color: Colors.black)),
                           onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        );
-                        Widget continueButton = FlatButton(
-                          child: Text("Yes"),
-                          onPressed: () {
-                            Navigator.pop(context);
                             Navigator.pop(context);
                           },
                         );
                         // set up the AlertDialog
                         AlertDialog alert = AlertDialog(
-                          title: Text("AlertDialog"),
+                          // title: Text("AlertDialog"),
                           content: Text(
-                              "Are you really sure you want to leave the game?"),
+                              "You can't leave the game at this point!",
+                              style: TextStyle(fontSize: 20.0)),
                           actions: [
                             cancelButton,
-                            continueButton,
                           ],
                         );
 
@@ -137,144 +129,168 @@ class _GameRoomState extends State<GameRoom> {
                         secondsRemaining: 59,
                         whenTimeExpires: () {
                           // set up the buttons
-                        Widget continueButton = FlatButton(
-                          child: Text("Check out high scores!"),
-                          onPressed: () {
-                            print("Check out high scores!");
-                          },
-                        );
-                        Widget cancelButton = FlatButton(
-                          child: Text("Go back to homepage"),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                        );
-                        // set up the AlertDialog
-                        AlertDialog alert = AlertDialog(
-                          title: Text("AlertDialog"),
-                          content: Text(
-                              "Oops your time has run out! Your score was ${state.score}!"),
-                          actions: [
-                            cancelButton,
-                            continueButton,
-                          ],
-                        );
+                          Widget continueButton = FlatButton(
+                            child: Text("Check out high scores!"),
+                            onPressed: () {
+                              print("Check out high scores!");
+                            },
+                          );
+                          Widget cancelButton = FlatButton(
+                            child: Text("Go back to homepage"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                          );
+                          // set up the AlertDialog
+                          AlertDialog alert = AlertDialog(
+                            title: Text("AlertDialog"),
+                            content: Text(
+                                "Oops your time has run out! Your score was {state.score}!"),
+                            actions: [
+                              cancelButton,
+                              continueButton,
+                            ],
+                          );
 
-                        // show the dialog
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return alert;
-                          },
-                        );
+                          // show the dialog
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return alert;
+                            },
+                          );
                         },
                         countDownTimerStyle: TextStyle(
-                            color: Colors.black, fontSize: 25.0, height: 1.2),
+                            color: Colors.white, fontSize: 25.0, height: 1.2),
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: appHeight / 20),
-              Expanded(
-                flex: 10,
-                child: Container(
-                    child: ValueListenableBuilder(
-                  valueListenable: Hive.box('cardsData').listenable(),
-                  builder: (context, Box<dynamic> box, _) {
-                    if (box.values.isEmpty) {
-                      return Text('data is empty');
-                    } else {
-                      return GridView.builder(
-                          padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                          itemCount: box.values.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  mainAxisSpacing: 30.0,
-                                  crossAxisSpacing: 10.0),
-                          itemBuilder: (BuildContext context, int index) {
-                            CardData cardData = box.getAt(index);
-                            return Container(
-                              child: FlipperWidget(
-                                index: cardData.index,
-                                stay_flipped_open: cardData.stay_flipped_open,
-                                do_animation: cardData.do_animation,
-                                image: cardData.image,
-                              ),
-                            );
-                            ;
-                          });
-                    }
-                  },
-                )),
-              ),
-              SizedBox(height: appHeight / 20),
             ],
-          )),
-          bottomNavigationBar: BottomAppBar(
-              child: Container(
-            color: Colors.green[300],
-            padding: EdgeInsets.symmetric(horizontal: 2, vertical: 5.0),
-            height: 60,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Expanded(
+          ),
+          backgroundColor: Colors.white,
+          body: BlocListener<GameBloc, GameState>(
+              listener: (BuildContext context, GameState state) {
+            if (state is GamePageLoaded) {
+              if (!state.init) {
+                if (state.status) {
+                  Fluttertoast.showToast(
+                      msg: "Great one!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                } else {
+                  Fluttertoast.showToast(
+                      msg: "Ouch! Try again!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
+              }
+            }
+          }, child: BlocBuilder<GameBloc, GameState>(
+                  builder: (BuildContext context, GameState state) {
+            List<Map<String, dynamic>> test_list = [];
+            if (state is GamePageLoaded) {
+              return SafeArea(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Container(
-                          height: 30.0,
-                          width: 30.0,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.white),
-                          child: Center(child: Text('4'))),
-                      Text("Flips Left",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ))
-                    ],
+                children: <Widget>[
+                  SizedBox(height: appHeight / 20),
+                  Expanded(
+                    flex: 10,
+                    child: Container(
+                        child: GridView.builder(
+                            padding: EdgeInsets.only(left: 5.0, right: 5.0),
+                            itemCount: state.cardDataList.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 30.0,
+                                    crossAxisSpacing: 10.0),
+                            itemBuilder: (BuildContext context, int index) {
+                              CardData cardData = state.cardDataList[index];
+                              return Container(
+                                child: FlipperWidget(
+                                  index: cardData.index,
+                                  stay_flipped_open: cardData.stay_flipped_open,
+                                  do_animation: cardData.do_animation,
+                                  image: cardData.image,
+                                ),
+                              );
+                            })),
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Text("FESTUS",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16.0))
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Container(
-                          height: 30.0,
-                          width: 30.0,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.white),
-                          child: Center(child: Text(state.score.toString()))),
-                      Text("Score",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ))
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          )),
-        );
-      } else if (state is GameInitial) {
-        return Loading();
-      } else {
-        return Loading();
-      }
-    }));
+                  SizedBox(height: appHeight / 20),
+                ],
+              ));
+              // bottomNavigationBar: BottomAppBar(
+              //     child: Container(
+              //   color: Colors.green[300],
+              //   padding: EdgeInsets.symmetric(horizontal: 2, vertical: 5.0),
+              //   height: 60,
+              //   child: Row(
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //     children: <Widget>[
+              //       Expanded(
+              //         child: Column(
+              //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //           children: <Widget>[
+              //             Container(
+              //                 height: 30.0,
+              //                 width: 30.0,
+              //                 decoration: BoxDecoration(
+              //                     shape: BoxShape.circle, color: Colors.white),
+              //                 child: Center(child: Text('4'))),
+              //             Text("Flips Left",
+              //                 style: TextStyle(
+              //                   fontWeight: FontWeight.bold,
+              //                 ))
+              //           ],
+              //         ),
+              //       ),
+              //       Expanded(
+              //         child: Column(
+              //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //           children: <Widget>[
+              //             Text("FESTUS",
+              //                 style: TextStyle(
+              //                     fontWeight: FontWeight.bold, fontSize: 16.0))
+              //           ],
+              //         ),
+              //       ),
+              //       Expanded(
+              //         child: Column(
+              //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //           children: <Widget>[
+              //             Container(
+              //                 height: 30.0,
+              //                 width: 30.0,
+              //                 decoration: BoxDecoration(
+              //                     shape: BoxShape.circle, color: Colors.white),
+              //                 child: Center(child: Text(state.score.toString()))),
+              //             Text("Score",
+              //                 style: TextStyle(
+              //                   fontWeight: FontWeight.bold,
+              //                 ))
+              //           ],
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // )),
+              // );
+            } else if (state is GameInitial) {
+              return Loading();
+            } else {
+              return Loading();
+            }
+          }))),
+    );
   }
 }
