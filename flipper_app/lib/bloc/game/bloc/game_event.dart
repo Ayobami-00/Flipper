@@ -32,3 +32,19 @@ class VerifyGamePage implements GameEvent{
   bool get stringify => throw UnimplementedError();
 
 }
+
+class SaveGameScore implements GameEvent{
+
+  final int score;
+
+  SaveGameScore({@required this.score});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => throw UnimplementedError();
+
+  @override
+  // TODO: implement stringify
+  bool get stringify => throw UnimplementedError();
+
+}

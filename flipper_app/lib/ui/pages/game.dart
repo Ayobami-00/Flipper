@@ -1,5 +1,6 @@
 import 'package:flipper_app/bloc/game/bloc/game_bloc.dart';
 import 'package:flipper_app/models/card_data.dart';
+import 'package:flipper_app/ui/pages/home.dart';
 import 'package:flipper_app/ui/widgets/loading.dart';
 import 'package:flipper_app/ui/widgets/timer.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GameRoom extends StatefulWidget {
@@ -16,6 +18,7 @@ class GameRoom extends StatefulWidget {
 }
 
 class _GameRoomState extends State<GameRoom> {
+  int score;
   Future<String> getStringValuesSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String stringValue = prefs.getString('USERNAME');
@@ -38,6 +41,8 @@ class _GameRoomState extends State<GameRoom> {
 
   @override
   void dispose() {
+    final gameRoomData = Hive.box('gameRoomData');
+    gameRoomData.put("gameRoomTapData", 0);
     Hive.close();
     super.dispose();
   }
@@ -126,35 +131,49 @@ class _GameRoomState extends State<GameRoom> {
                       width: 100.0,
                       padding: EdgeInsets.only(top: 10.0, right: 4.0),
                       child: TimerWidget(
-                        secondsRemaining: 59,
+                        secondsRemaining: 20,
                         whenTimeExpires: () {
                           // set up the buttons
-                          Widget continueButton = FlatButton(
-                            child: Text("Check out high scores!"),
-                            onPressed: () {
-                              print("Check out high scores!");
-                            },
-                          );
+                          // Widget continueButton = FlatButton(
+                          //   color: Colors.green,
+                          //   child: Text("Check out high scores!"),
+                          //   onPressed: () {
+                          //     print("Check out high scores!");
+                          //   },
+                          // );
+                          // BlocProvider.of<GameBloc>(context).add(SaveGameScore(score: score));
                           Widget cancelButton = FlatButton(
-                            child: Text("Go back to homepage"),
+                            child: Text("Go back to homepage",
+                                style: TextStyle(
+                                  color: Colors.green,
+                                )),
                             onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType.fade,
+                                    duration: const Duration(milliseconds: 500),
+                                    child: HomePage(),
+                                  ));
                             },
                           );
                           // set up the AlertDialog
                           AlertDialog alert = AlertDialog(
-                            title: Text("AlertDialog"),
+                            // title: Text("AlertDialog"),
                             content: Text(
-                                "Oops your time has run out! Your score was {state.score}!"),
+                              "Oops your time has run out! Your score was $score !",
+                              style: TextStyle(
+                                  fontSize: 20.0, fontWeight: FontWeight.bold),
+                            ),
                             actions: [
                               cancelButton,
-                              continueButton,
+                              // continueButton,
                             ],
                           );
 
                           // show the dialog
                           showDialog(
+                            barrierDismissible: false,
                             context: context,
                             builder: (BuildContext context) {
                               return alert;
@@ -198,6 +217,7 @@ class _GameRoomState extends State<GameRoom> {
                   builder: (BuildContext context, GameState state) {
             List<Map<String, dynamic>> test_list = [];
             if (state is GamePageLoaded) {
+              score = state.score;
               return SafeArea(
                   child: Column(
                 children: <Widget>[

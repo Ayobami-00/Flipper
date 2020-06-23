@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flipper_app/models/card_data.dart';
+import 'package:flipper_app/models/scores_data.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'game_event.dart';
 part 'game_state.dart';
@@ -25,9 +27,22 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     GameEvent event,
   ) async* {
     // final Box<HiveInterface> numberofTapsDataBox = Hive.box('numberofTapsData');
+    if (event is SaveGameScore) {
+      await Hive.openBox('SCORES');
+      final scoresBox = Hive.box('SCORES');
+      String currentDate = "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String username = prefs.getString('USERNAME');
+      
+      scoresBox.add(ScoresData(
+        score: event.score.toString(),
+        date: currentDate,
+        username: username,
+      ));
+    }
 
     if (event is LoadGamePage) {
-      List<String> shuffled_image_list = [
+      List<String> image_list = [
         "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg",
         "https://cdn.pixabay.com/photo/2015/12/01/20/28/road-1072823__340.jpg",
         "https://cdn.pixabay.com/photo/2015/06/19/21/24/the-road-815297__340.jpg",
@@ -104,7 +119,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       //     "image": shuffled_image_list[11]
       //   },
       // };
-
+      List<String> shuffled_image_list = image_list.toList()..shuffle();
       final cardDataBox = await Hive.openBox('cardsData');
       List<CardData> cardDataList = [];
       for (int index = 0; index < 12; index++) {
@@ -125,9 +140,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       // Hive.close();
 
       yield (GamePageLoaded(
-          status: false, init: true, cardDataList: cardDataList));
+          status: false, init: true, cardDataList: cardDataList, score: score));
     } else if (event is VerifyGamePage) {
-      yield  GameInitial();
+      yield GameInitial();
       if (event.cardData1.image == event.cardData2.image) {
         final cardDataBox = Hive.box('cardsData');
         List<CardData> cardDataList =
@@ -148,30 +163,31 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
         final gameRoomData = await Hive.openBox('gameRoomData');
         int score = await gameRoomData.get("gameScore") as int;
-        await gameRoomData.put("gameScore", score+5);
-        print("Updated Score: ${score+5}");
+        await gameRoomData.put("gameScore", score + 5);
+        print("Updated Score: ${score + 5}");
 
         await Future.delayed(const Duration(milliseconds: 400));
         yield (GamePageLoaded(
             status: true,
             init: false,
-            cardDataList: cardDataList));
+            cardDataList: cardDataList,
+            score: score));
       } else {
-        yield  GameInitial();
+        yield GameInitial();
         final cardDataBox = Hive.box('cardsData');
         List<CardData> cardDataList =
             await cardDataBox.get("cardsData") as List<CardData>;
-            print("No match $cardDataList");
+        print("No match $cardDataList");
 
         final gameRoomData = await Hive.openBox('gameRoomData');
         int score = await gameRoomData.get("gameScore") as int;
         print("Updated Score: ${score}");
         await Future.delayed(const Duration(milliseconds: 500));
         yield (GamePageLoaded(
-          status: false,
-          init: false,
-          cardDataList: cardDataList,
-        ));
+            status: false,
+            init: false,
+            cardDataList: cardDataList,
+            score: score));
       }
     }
   }

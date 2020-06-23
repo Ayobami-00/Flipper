@@ -90,7 +90,7 @@ class _FlipperWidgetState extends State<FlipperWidget>
 
       print(cardData1.image);
       print(cardData2.image);
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 600));
       BlocProvider.of<GameBloc>(context).add(VerifyGamePage(cardData1: cardData1, cardData2: cardData2));
       
     }

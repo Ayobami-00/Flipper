@@ -51,29 +51,32 @@ class _CountDownTimerPageState extends State<CountDownTimerPage>
   }
 
   Widget build(BuildContext context) {
-    return new Scaffold(
-        backgroundColor: Colors.green,
-        // appBar: AppBar(title: Text("Timer test")),
-        body: Center(
-            child: Container(
-          height: size,
-          child: TimerWidget(
-            secondsRemaining: 10,
-            whenTimeExpires: () {
-              Navigator.push(
-                  context,
-                  PageTransition(
-                    type: PageTransitionType.fade,
-                    duration: const Duration(milliseconds: 500),
-                    child: BlocProvider(
-                      create: (context) => GameBloc(),
-                      child: GameRoom(),
-                    ),
-                  ));
-            },
-            countDownTimerStyle:
-                TextStyle(color: Colors.white, fontSize: 120.0, height: 1.2),
-          ),
-        )));
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: new Scaffold(
+          backgroundColor: Colors.green,
+          // appBar: AppBar(title: Text("Timer test")),
+          body: Center(
+              child: Container(
+            height: size,
+            child: TimerWidget(
+              secondsRemaining: 10,
+              whenTimeExpires: () {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.fade,
+                      duration: const Duration(milliseconds: 500),
+                      child: BlocProvider(
+                        create: (context) => GameBloc(),
+                        child: GameRoom(),
+                      ),
+                    ));
+              },
+              countDownTimerStyle:
+                  TextStyle(color: Colors.white, fontSize: 120.0, height: 1.2),
+            ),
+          ))),
+    );
   }
 }

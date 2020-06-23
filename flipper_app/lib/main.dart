@@ -1,3 +1,4 @@
+import 'package:flipper_app/models/scores_data.dart';
 import 'package:flipper_app/ui/pages/home.dart';
 import 'package:flipper_app/ui/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
-  // Hive.registerAdapter(CardDataAdapter());
+  Hive.registerAdapter(CardDataAdapter());
+  Hive.registerAdapter(ScoresDataAdapter());
   // await Hive.openBox<CardData>('cardsData');
   // await Hive.openBox('gameRoomData');
   runApp(MyApp());
